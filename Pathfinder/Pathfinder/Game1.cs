@@ -64,13 +64,13 @@ namespace Pathfinder
             TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFrameRate);
             //load level map
             level = new Level();
-            level.Loadmap("../../../Content/1.txt");
+            level.Loadmap("../../../Content/2.txt");
+            player = new Player(30, 20);
             //instantiate bot and player objects
             bot = new AiBotRSR(10, 20);
-            bot.ExpandRectangles(level);
+            bot.ExpandRectangles(level, player);
             //bot.generate(level);
             //bot.LoadMap("../../../Content/map4.txt", level.GridSize);
-            player = new Player(30, 20);
             //make mouse visable
             IsMouseVisible = true;
         }
@@ -156,9 +156,9 @@ namespace Pathfinder
             //draw rectangles
             bot.DrawRectangles(spriteBatch, open_tex);
             //draw bot
-            spriteBatch.Draw(aiTexture, bot.ScreenPosition, Color.White);
+            spriteBatch.Draw(aiTexture, bot.ScreenPosition, Color.White*0.3f);
             //drawe player
-            spriteBatch.Draw(playerTexture, player.ScreenPosition, Color.White);
+            spriteBatch.Draw(playerTexture, player.ScreenPosition, Color.White*0.3f);
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -177,20 +177,20 @@ namespace Pathfinder
                     if (level.tiles[x, y] == 0) spriteBatch.Draw(tile1Texture, pos, Color.White);
                     else spriteBatch.Draw(tile2Texture, pos, Color.White);
 
-                    //foreach (node n in bot.open)
-                    //{
-                    //    if (n.pos == posOrig)
-                    //    {
-                    //        spriteBatch.Draw(open_tex, pos, Color.White * 0.5f);
-                    //    }
-                    //}
-                    //foreach (node n in bot.closed)
-                    //{
-                    //    if (n.pos == posOrig)
-                    //    {
-                    //        spriteBatch.Draw(closed_tex, pos, Color.White * 0.5f);
-                    //    }
-                    //}
+                    foreach (node n in bot.open)
+                    {
+                        if (n.pos == posOrig)
+                        {
+                            spriteBatch.Draw(open_tex, pos, Color.White * 0.5f);
+                        }
+                    }
+                    foreach (node n in bot.closed)
+                    {
+                        if (n.pos == posOrig)
+                        {
+                            spriteBatch.Draw(closed_tex, pos, Color.White * 0.5f);
+                        }
+                    }
                     foreach (Coord2 n in bot.path)
                     {
                         if (n == posOrig)
