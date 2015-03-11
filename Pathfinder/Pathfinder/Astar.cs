@@ -108,7 +108,7 @@ namespace Pathfinder
         }
         void CheckSpace(node curr, Level level)
         {
-            if (curr.pos.X >= 40|| curr.pos.Y >= 40)
+            if (curr.pos.X >= level.gridX|| curr.pos.Y >= level.gridY)
             {
                 return;
             }
@@ -165,25 +165,25 @@ namespace Pathfinder
         {
             if (diag)
             {
-                for (int i = 0; i < level.GridSize; i++)
+                for (int i = 0; i < level.gridX; i++)
                 {
-                    for (int j = 0; j < level.GridSize; j++)
+                    for (int j = 0; j < level.gridY; j++)
                     {
                         float D2 = (float)Math.Sqrt(2.0f)*weight;
-                        float dx = Math.Abs(j - player.GridPosition.X);
-                        float dy = Math.Abs(i - player.GridPosition.Y);
-                        heuristic[j, i] = weight * (dx + dy)+ (D2 - 2*weight)* Math.Min(dx,dy);
+                        float dx = Math.Abs(i - player.GridPosition.X);
+                        float dy = Math.Abs(j - player.GridPosition.Y);
+                        heuristic[i, j] = weight * (dx + dy)+ (D2 - 2*weight)* Math.Min(dx,dy);
                     }
                 }
             }
             else
-            for (int i = 0; i < level.GridSize; i++)
+            for (int i = 0; i < level.gridX; i++)
             {
-                for (int j = 0; j < level.GridSize; j++)
+                for (int j = 0; j < level.gridX; j++)
                 {
-                    float dx = Math.Abs(j - player.GridPosition.X);
-                    float dy = Math.Abs(i - player.GridPosition.Y);
-                    heuristic[j, i] = weight * (dx + dy);
+                    float dx = Math.Abs(i - player.GridPosition.X);
+                    float dy = Math.Abs(j - player.GridPosition.Y);
+                    heuristic[i, j] = weight * (dx + dy);
                 }
             }
         }

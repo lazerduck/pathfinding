@@ -40,11 +40,12 @@ namespace Pathfinder
         Texture2D open_tex;
         Texture2D closed_tex;
         Texture2D path_tex;
+        //level size
         
         //objects representing the level map, bot, and player 
         private Level level;
         //private AiBotBase bot;
-        private AiBotRSR bot;
+        private DijkstraPrecalculated bot;
         private Player player;
 
         //screen size and frame rate
@@ -64,12 +65,12 @@ namespace Pathfinder
             TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFrameRate);
             //load level map
             level = new Level();
-            level.Loadmap("../../../Content/2.txt");
+            level.Loadmap("../../../Content/5.txt");
             player = new Player(30, 20);
             //instantiate bot and player objects
-            bot = new AiBotRSR(10, 20);
-            bot.ExpandRectangles(level, player);
-            //bot.generate(level);
+            bot = new DijkstraPrecalculated(10, 20);
+            //bot.ExpandRectangles(level, player);
+            bot.generate(level);
             //bot.LoadMap("../../../Content/map4.txt", level.GridSize);
             //make mouse visable
             IsMouseVisible = true;
@@ -154,7 +155,7 @@ namespace Pathfinder
             //    }
             //}
             //draw rectangles
-            bot.DrawRectangles(spriteBatch, open_tex);
+            //bot.DrawRectangles(spriteBatch, open_tex, level);
             //draw bot
             spriteBatch.Draw(aiTexture, bot.ScreenPosition, Color.White*0.3f);
             //drawe player
@@ -168,9 +169,9 @@ namespace Pathfinder
         {
             //draws the map grid
             int sz = level.GridSize;
-            for (int x = 0; x < sz; x++)
+            for (int x = 0; x < level.gridX; x++)
             {
-                for (int y = 0; y < sz; y++)
+                for (int y = 0; y < level.gridY; y++)
                 {
                     Coord2 pos = new Coord2((x*15), (y*15));
                     Coord2 posOrig = new Coord2((x), (y));

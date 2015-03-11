@@ -147,6 +147,11 @@ namespace Pathfinder
             path.Add(end.pos);
             while (end.prev != new Coord2(-1, -1))
             {
+                if (end.prev == end.pos)
+                {
+                    path.Add(end.prev);
+                    break;
+                }
                 end = Carray[end.prev.X, end.prev.Y];
                 path.Add(end.pos);
             }

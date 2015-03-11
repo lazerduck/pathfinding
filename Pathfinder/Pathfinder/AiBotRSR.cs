@@ -71,10 +71,10 @@ namespace Pathfinder
         //create the rectangles
         public void ExpandRectangles(Level level, Player plr)
         {
-            pruned = new int[level.GridSize, level.GridSize];
-            for (int i = 0; i < level.GridSize; i++)
+            pruned = new int[level.gridX, level.gridY];
+            for (int i = 0; i < level.gridX; i++)
             {
-                for (int j = 0; j < level.GridSize; j++)
+                for (int j = 0; j < level.gridY; j++)
                 {
                     pruned[i, j] = 1;
                     Coord2 temp = new Coord2(j, i);
@@ -181,17 +181,17 @@ namespace Pathfinder
         }
         public void Prune(Level level ,Player plr)
         {
-            for (int x = 0; x < level.GridSize; x++)
+            for (int x = 0; x < level.gridX; x++)
             {
-                for (int y = 0; y < level.GridSize; y++)
+                for (int y = 0; y < level.gridY; y++)
                 {
                     pruned[x, y] = 1;
                 }
             }
             //check through each point
-            for (int x = 0; x < level.GridSize; x++)
+            for (int x = 0; x < level.gridX; x++)
             {
-                for (int y = 0; y < level.GridSize; y++)
+                for (int y = 0; y < level.gridY; y++)
                 {
                     //check if it is on the edge of a rectangle
                     Coord2 temp = new Coord2(x, y);
@@ -209,11 +209,11 @@ namespace Pathfinder
                 }
             }
         }
-        public void DrawRectangles(SpriteBatch spritebatch, Texture2D texture)
+        public void DrawRectangles(SpriteBatch spritebatch, Texture2D texture, Level lvl)
         {
-            for (int i = 0; i < 40; i++)
+            for (int i = 0; i < lvl.gridX; i++)
             {
-                for (int j = 0; j < 40; j++)
+                for (int j = 0; j < lvl.gridY; j++)
                 {
                     if (pruned[i, j] == 0)
                     {
@@ -261,25 +261,25 @@ namespace Pathfinder
         }
         void CalculateHeuristic(Level level, Player plr)
         {
-            heuristic = new float[level.GridSize, level.GridSize];
+            heuristic = new float[level.gridX, level.gridY];
             
-            for (int i = 0; i < level.GridSize; i++)
+            for (int i = 0; i < level.gridY; i++)
             {
-                for (int j = 0; j < level.GridSize; j++)
+                for (int j = 0; j < level.gridX; j++)
                 {
                     float D2 = (float)Math.Sqrt(2.0f) * weight;
                     float dx = Math.Abs(j - plr.GridPosition.X);
                     float dy = Math.Abs(i - plr.GridPosition.Y);
-                    heuristic[j, i] = weight * (dx + dy) + (D2 - 2 * weight) * Math.Min(dx, dy);
+                    heuristic[j, i] = weight * (dx + dy) + (D2 - 1 * weight) * Math.Min(dx, dy);
                 }
             }
         }
         void Astar(Level level, Player plr)
         {
-            Carray = new node[level.GridSize, level.GridSize];
-            for (int i = 0; i < level.GridSize; i++)
+            Carray = new node[level.gridX, level.gridY];
+            for (int i = 0; i < level.gridY; i++)
             {
-                for (int j = 0; j < level.GridSize; j++)
+                for (int j = 0; j < level.gridX; j++)
                 {
                     Carray[j, i].cost = -1;
                 }
@@ -357,7 +357,7 @@ namespace Pathfinder
             if (curr.pos != curr.prev)
             {
                 //is in the range?
-                if (curr.pos.Y <= level.GridSize - 1 && curr.pos.X <= level.GridSize - 1 && curr.pos.Y >= 0 && curr.pos.X >= 0)
+                if (curr.pos.Y <= level.gridY - 1 && curr.pos.X <= level.gridX - 1 && curr.pos.Y >= 0 && curr.pos.X >= 0)
                 {
                     //is it valid
                     if (level.ValidPosition(new Coord2(curr.pos.X, curr.pos.Y)))

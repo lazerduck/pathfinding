@@ -22,39 +22,39 @@ namespace Pathfinder
         }
         protected override void ChooseNextGridLocation(Level level, Player plr)
         {
-            SetNextGridPosition(map[(GridPosition.Y * level.GridSize) + GridPosition.X, (plr.GridPosition.Y * level.GridSize) + plr.GridPosition.X], level);
+            SetNextGridPosition(map[(GridPosition.Y * level.gridY) + GridPosition.X, (plr.GridPosition.Y * level.gridY) + plr.GridPosition.X], level);
         }
         public void calcPaths(Level level)
         {
-            heuristic = new float[level.GridSize, level.GridSize];
-            map = new Coord2[(int)Math.Pow(level.GridSize, 2), (int)Math.Pow(level.GridSize, 2)];
+            heuristic = new float[level.gridX, level.gridY];
+            map = new Coord2[(int)Math.Pow(level.gridX, 2), (int)Math.Pow(level.gridY, 2)];
             //to point
             //NOTE - i = y, j = x
             long time_sec = 0;
             long time_min = 0;
-            for (int i = 0; i < level.GridSize; i++)
+            for (int i = 0; i < level.gridY; i++)
             {
-                for (int j = 0; j < level.GridSize; j++)
+                for (int j = 0; j < level.gridX; j++)
                 {
                     long time = DateTime.Now.Ticks;
                     if (level.ValidPosition(new Coord2(j, i)))
                     {
                         CalcHeuriistic(level, new Coord2(j, i));
                         //from point 
-                        for (int ii = 0; ii < level.GridSize; ii++)
+                        for (int ii = 0; ii < level.gridY; ii++)
                         {
-                            for (int jj = 0; jj < level.GridSize; jj++)
+                            for (int jj = 0; jj < level.gridX; jj++)
                             {
 
                                 if (ii == i && jj == j)
                                 {
-                                    map[(ii * level.GridSize) + jj, (i * level.GridSize) + j] = new Coord2(j, i);
+                                    map[(ii * level.gridX) + jj, (i * level.gridX) + j] = new Coord2(j, i);
                                 }
                                 else
                                 {
                                     calcpath(level, new Coord2(j, i), new Coord2(jj, ii));
                                     //add last node to array
-                                    map[(ii * level.GridSize) + jj, (i * level.GridSize) + j] = path.Last<Coord2>();
+                                    map[(ii * level.gridX) + jj, (i * level.gridX) + j] = path.Last<Coord2>();
                                 }
                             }
                         }
@@ -70,9 +70,9 @@ namespace Pathfinder
             }
             //save the map
             StreamWriter output = new StreamWriter("map.txt");
-            for (int i = 0; i < (int)Math.Pow(level.GridSize, 2); i++)
+            for (int i = 0; i < (int)Math.Pow(level.gridY, 2); i++)
             {
-                for (int j = 0; j < (int)Math.Pow(level.GridSize, 2); j++)
+                for (int j = 0; j < (int)Math.Pow(level.gridX, 2); j++)
                 {
                     output.Write(map[j,i].X+","+map[j,i].Y + " ");
                 }
@@ -81,17 +81,17 @@ namespace Pathfinder
            
             
         }
-        public void LoadMap(string addr, int levelSize)
+        public void LoadMap(string addr, Level lvl)
         {
-            map = new Coord2[(int)Math.Pow(levelSize, 2), (int)Math.Pow(levelSize, 2)];
+            map = new Coord2[(int)Math.Pow(lvl.gridX, 2), (int)Math.Pow(lvl.gridY, 2)];
             StreamReader input = new StreamReader(addr);
             string raw = input.ReadToEnd();
             string[] split = raw.Split(' ');
-            for (int i = 0; i < (int)Math.Pow(levelSize, 2)-1; i++)
+            for (int i = 0; i < (int)Math.Pow(lvl.gridY, 2)-1; i++)
             {
-                for (int j = 0; j < (int)Math.Pow(levelSize, 2); j++)
+                for (int j = 0; j < (int)Math.Pow(lvl.gridX, 2); j++)
                 {
-                    string []splitAgain = split[(i * levelSize*levelSize) + j].Split(',');
+                    string []splitAgain = split[(i * lvl.gridY*lvl.gridY) + j].Split(',');
                     map[j, i].X = Convert.ToInt32(splitAgain[0]);
                     map[j, i].Y = Convert.ToInt32(splitAgain[1]);
                     
@@ -173,7 +173,7 @@ namespace Pathfinder
         }
         void CheckSpace(node curr, Level level)
         {
-            if (curr.pos.X >= 40 || curr.pos.Y >= 40)
+            if (curr.pos.X >= level.gridX || curr.pos.Y >= level.gridY)
             {
                 return;
             }
@@ -230,25 +230,25 @@ namespace Pathfinder
         {
             if (diag)
             {
-                for (int i = 0; i < level.GridSize; i++)
+                for (int i = 0; i < level.gridX; i++)
                 {
-                    for (int j = 0; j < level.GridSize; j++)
+                    for (int j = 0; j < level.gridY; j++)
                     {
                         float D2 = (float)Math.Sqrt(2.0f) * weight;
-                        float dx = Math.Abs(j - goal.X);
-                        float dy = Math.Abs(i - goal.Y);
-                        heuristic[j, i] = weight * (dx + dy) + (D2 - 2 * weight) * Math.Min(dx, dy);
+                        float dx = Math.Abs(i - goal.X);
+                        float dy = Math.Abs(j - goal.Y);
+                        heuristic[i, j] = weight * (dx + dy) + (D2 - 2 * weight) * Math.Min(dx, dy);
                     }
                 }
             }
             else
-                for (int i = 0; i < level.GridSize; i++)
+                for (int i = 0; i < level.gridX; i++)
                 {
-                    for (int j = 0; j < level.GridSize; j++)
+                    for (int j = 0; j < level.gridY; j++)
                     {
-                        float dx = Math.Abs(j - goal.X);
-                        float dy = Math.Abs(i - goal.Y);
-                        heuristic[j, i] = weight * (dx + dy);
+                        float dx = Math.Abs(i - goal.X);
+                        float dy = Math.Abs(j - goal.Y);
+                        heuristic[i, j] = weight * (dx + dy);
                     }
                 }
         }

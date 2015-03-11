@@ -16,14 +16,14 @@ namespace Pathfinder
         public int playerscent = 20;
         public int[,] buffer1;
         public int[,] buffer2;
-        public AiBotAvP(int x, int y, bool search)
+        public AiBotAvP(int x, int y, bool search, Level lvl)
             : base(x, y)
         {
-            buffer1 = new int[40, 40];
-            buffer2 = new int[40, 40];
-            for (int i = 0; i < 40; i++)
+            buffer1 = new int[lvl.gridX, lvl.gridY];
+            buffer2 = new int[lvl.gridX, lvl.gridY];
+            for (int i = 0; i < lvl.gridX; i++)
             {
-                for (int j = 0; j < 40; j++)
+                for (int j = 0; j < lvl.gridY; j++)
                 {
                     buffer1[i, j] = 0;
                     buffer2[i, j] = 0;
@@ -85,9 +85,9 @@ namespace Pathfinder
             //playerscent++;
             buffer2 = buffer1;
             //Update buffer 1 based on buffer 2
-            for (int i = 0; i < 40; i++)
+            for (int i = 0; i < level.gridX; i++)
             {
-                for (int j = 0; j < 40; j++)
+                for (int j = 0; j < level.gridY; j++)
                 {
                     UpdateSpace(new Coord2(i, j), level);
                 }
