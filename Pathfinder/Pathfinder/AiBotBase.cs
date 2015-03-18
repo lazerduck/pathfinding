@@ -79,7 +79,10 @@ namespace Pathfinder
             //calculate screen position
             screenPosition = (gridPosition * 15) + ((((targetPosition * 15) - (gridPosition * 15)) * (moveTime - timerMs)) / moveTime);
         }
+        public virtual void Draw(SpriteBatch spritebatch, Texture2D texture, Level lvl)
+        {
 
+        }
         //this function is filled in by a derived class: must use SetNextGridLocation to actually move the bot
         protected abstract void ChooseNextGridLocation(Level level, Player plr);
     }

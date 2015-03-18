@@ -45,13 +45,14 @@ namespace Pathfinder
         //objects representing the level map, bot, and player 
         private Level level;
         //private AiBotBase bot;
-        private DijkstraPrecalculated bot;
+        private AiBotRSR bot;
         private Player player;
 
         //screen size and frame rate
         private const int TargetFrameRate = 50;
         private const int BackBufferWidth = 600;
         private const int BackBufferHeight = 600;
+
 
         public Game1()
         {
@@ -68,9 +69,9 @@ namespace Pathfinder
             level.Loadmap("../../../Content/5.txt");
             player = new Player(30, 20);
             //instantiate bot and player objects
-            bot = new DijkstraPrecalculated(10, 20);
-            //bot.ExpandRectangles(level, player);
-            bot.generate(level);
+            bot = new AiBotRSR(10, 20);
+            bot.ExpandRectangles(level, player);
+            //bot.generate(level);
             //bot.LoadMap("../../../Content/map4.txt", level.GridSize);
             //make mouse visable
             IsMouseVisible = true;
@@ -155,7 +156,7 @@ namespace Pathfinder
             //    }
             //}
             //draw rectangles
-            //bot.DrawRectangles(spriteBatch, open_tex, level);
+            bot.Draw(spriteBatch, open_tex, level);
             //draw bot
             spriteBatch.Draw(aiTexture, bot.ScreenPosition, Color.White*0.3f);
             //drawe player

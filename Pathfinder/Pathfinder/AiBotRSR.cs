@@ -54,7 +54,7 @@ namespace Pathfinder
             }
         };
         node[,] Carray;
-        float weight = 0.7f;
+        float weight = 1f;
         Coord2 prevPos = new Coord2(-1,-1);
         Coord2 moveto = new Coord2(0, 0);
         //created rectangle list
@@ -71,6 +71,8 @@ namespace Pathfinder
         //create the rectangles
         public void ExpandRectangles(Level level, Player plr)
         {
+            Timer time = new Timer();
+            time.startTick();
             pruned = new int[level.gridX, level.gridY];
             for (int i = 0; i < level.gridX; i++)
             {
@@ -82,6 +84,7 @@ namespace Pathfinder
                 }
             }
             Prune(level, plr);
+            Console.WriteLine("Rectangle time = " + time.getTick()+" ms");
         }
         public void Expand(Coord2 start, Level level)
         {
@@ -209,7 +212,7 @@ namespace Pathfinder
                 }
             }
         }
-        public void DrawRectangles(SpriteBatch spritebatch, Texture2D texture, Level lvl)
+        public override void Draw(SpriteBatch spritebatch, Texture2D texture, Level lvl)
         {
             for (int i = 0; i < lvl.gridX; i++)
             {
@@ -270,7 +273,7 @@ namespace Pathfinder
                     float D2 = (float)Math.Sqrt(2.0f) * weight;
                     float dx = Math.Abs(j - plr.GridPosition.X);
                     float dy = Math.Abs(i - plr.GridPosition.Y);
-                    heuristic[j, i] = weight * (dx + dy) + (D2 - 1 * weight) * Math.Min(dx, dy);
+                    heuristic[j, i] = weight * (dx + dy) + (D2 - 1.0f * weight) * Math.Min(dx, dy);
                 }
             }
         }

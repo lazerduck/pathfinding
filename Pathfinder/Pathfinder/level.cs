@@ -64,7 +64,7 @@ namespace Pathfinder
             //Debug.Assert(lines.Count == gridX, String.Format("loaded map string must have {0} lines.",gridSize));
 
             // Loop over every tile position,
-            for (int y = 0; y < gridY; ++y)
+            for (int y = 0; y < gridY-1; ++y)
             {
                 for (int x = 0; x < gridX; ++x)
                 {
