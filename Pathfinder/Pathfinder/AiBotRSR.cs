@@ -54,7 +54,6 @@ namespace Pathfinder
             }
         };
         node[,] Carray;
-        float weight = 1f;
         Coord2 prevPos = new Coord2(-1,-1);
         Coord2 moveto = new Coord2(0, 0);
         //created rectangle list
@@ -62,7 +61,6 @@ namespace Pathfinder
         //0 = in use, 1 = pruned
         int[,] pruned;
         //Astar stuff
-        float[,] heuristic;
         public AiBotRSR(int x, int y)
             : base(x, y)
         {
@@ -204,10 +202,6 @@ namespace Pathfinder
                         {
                             pruned[x, y] = 0;
                         }
-                        if (r.isContained(plr.GridPosition)&&r.isContained(temp))
-                        {
-                            pruned[x, y] = 0;
-                        }
                     }
                 }
             }
@@ -227,11 +221,38 @@ namespace Pathfinder
         }
         protected override void ChooseNextGridLocation(Level level, Player plr)
         {
+            foreach (Rectangle r in RectList)
+            {
+                if (r.isContained(plr.GridPosition) && r.isContained(GridPosition))
+                {
+                    //move straight to player, clear path
+                    Coord2 pos = GridPosition;
+                    if(plr.GridPosition.X > GridPosition.X)
+                    {
+                        pos.X++;
+                    }
+                    if (plr.GridPosition.X < GridPosition.X)
+                    {
+                        pos.X--;
+                    }
+                    if (plr.GridPosition.Y > GridPosition.Y)
+                    {
+                        pos.Y++;
+                    }
+                    if (plr.GridPosition.Y < GridPosition.Y)
+                    {
+                        pos.Y--;
+                    }
+                    SetNextGridPosition(pos, level);
+                    return;
+                }
+            }
             if (prevPos != plr.GridPosition)
             {
                 Prune(level, plr);
                 prevPos = plr.GridPosition;
-                CalculateHeuristic(level, plr);
+                heuristic = new float[level.gridX, level.gridY];
+                CalcHeuristic(level, plr.GridPosition);
                 Astar(level, plr);
 
             }
@@ -260,21 +281,6 @@ namespace Pathfinder
                     next.Y -= 1;
                 }
                 SetNextGridPosition(next, level);
-            }
-        }
-        void CalculateHeuristic(Level level, Player plr)
-        {
-            heuristic = new float[level.gridX, level.gridY];
-            
-            for (int i = 0; i < level.gridY; i++)
-            {
-                for (int j = 0; j < level.gridX; j++)
-                {
-                    float D2 = (float)Math.Sqrt(2.0f) * weight;
-                    float dx = Math.Abs(j - plr.GridPosition.X);
-                    float dy = Math.Abs(i - plr.GridPosition.Y);
-                    heuristic[j, i] = weight * (dx + dy) + (D2 - 1.0f * weight) * Math.Min(dx, dy);
-                }
             }
         }
         void Astar(Level level, Player plr)

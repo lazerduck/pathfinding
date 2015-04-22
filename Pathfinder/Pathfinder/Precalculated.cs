@@ -39,7 +39,7 @@ namespace Pathfinder
                     long time = DateTime.Now.Ticks;
                     if (level.ValidPosition(new Coord2(j, i)))
                     {
-                        CalcHeuriistic(level, new Coord2(j, i));
+                        CalcHeuristic(level, new Coord2(j, i));
                         //from point 
                         for (int ii = 0; ii < level.gridY; ii++)
                         {
@@ -225,32 +225,6 @@ namespace Pathfinder
                     }
                 }
             }
-        }
-        void CalcHeuriistic(Level level, Coord2 goal)
-        {
-            if (diag)
-            {
-                for (int i = 0; i < level.gridX; i++)
-                {
-                    for (int j = 0; j < level.gridY; j++)
-                    {
-                        float D2 = (float)Math.Sqrt(2.0f) * weight;
-                        float dx = Math.Abs(i - goal.X);
-                        float dy = Math.Abs(j - goal.Y);
-                        heuristic[i, j] = weight * (dx + dy) + (D2 - 2 * weight) * Math.Min(dx, dy);
-                    }
-                }
-            }
-            else
-                for (int i = 0; i < level.gridX; i++)
-                {
-                    for (int j = 0; j < level.gridY; j++)
-                    {
-                        float dx = Math.Abs(i - goal.X);
-                        float dy = Math.Abs(j - goal.Y);
-                        heuristic[i, j] = weight * (dx + dy);
-                    }
-                }
         }
     }
 }

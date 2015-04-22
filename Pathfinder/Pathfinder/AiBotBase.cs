@@ -16,6 +16,8 @@ namespace Pathfinder
     //of new positions, but leaves the actual behaviour function as an abstract member that must be implmented by a 
     //dervied class 
 
+
+
     abstract class AiBotBase
     {
         //lists
@@ -30,6 +32,11 @@ namespace Pathfinder
         private Coord2 screenPosition; //X position, Y position on grid
         int timerMs;
         const int moveTime = 400; //miliseconds
+
+        protected bool diag = true;
+        protected float weight = 1f;
+
+        protected float[,] heuristic;
 
         //accessors
         public Coord2 GridPosition
@@ -85,5 +92,32 @@ namespace Pathfinder
         }
         //this function is filled in by a derived class: must use SetNextGridLocation to actually move the bot
         protected abstract void ChooseNextGridLocation(Level level, Player plr);
+
+        public void CalcHeuristic(Level level, Coord2 player)
+        {
+            if (diag)
+            {
+                for (int i = 0; i < level.gridX; i++)
+                {
+                    for (int j = 0; j < level.gridY; j++)
+                    {
+                        float D2 = (float)Math.Sqrt(2.0f) * weight;
+                        float dx = Math.Abs(i - player.X);
+                        float dy = Math.Abs(j - player.Y);
+                        heuristic[i, j] = weight * (dx + dy) + (D2 - 2 * weight) * Math.Min(dx, dy);
+                    }
+                }
+            }
+            else
+                for (int i = 0; i < level.gridX; i++)
+                {
+                    for (int j = 0; j < level.gridX; j++)
+                    {
+                        float dx = Math.Abs(i - player.X);
+                        float dy = Math.Abs(j - player.Y);
+                        heuristic[i, j] = weight * (dx + dy);
+                    }
+                }
+        }
     }
 }
