@@ -23,8 +23,8 @@ namespace Pathfinder
             }
             if (path.Count != 0)
             {
-                SetNextGridPosition(path.Last<Coord2>(), level);
-                path.RemoveAt(path.Count - 1);
+                SetNextGridPosition(path[0], level);
+                path.RemoveAt(0);
             }
         }
         void calcpath(Level level)
@@ -35,7 +35,7 @@ namespace Pathfinder
             path.Clear();
             //add start to open list
             node start = new node();
-            start.pos = GridPosition;
+            start.pos = target;
             start.prev = new Coord2(-1, -1);
             start.cost = 0;
             open.Add(start);
@@ -66,7 +66,7 @@ namespace Pathfinder
                 open.RemoveAt(rem);
                 closed.Add(curr);
                 //are we at the end
-                if (curr.pos == target)
+                if (curr.pos == GridPosition)
                 {
                     CreatePath(curr);
                     found = true;
@@ -82,6 +82,19 @@ namespace Pathfinder
                 curr.pos.Y += 1;
                 CheckSpace(curr, level);
                 curr.pos.Y -= 2;
+                CheckSpace(curr, level);
+                curr.cost += 0.4142f;
+                //up left
+                curr.pos.X -= 1;
+                CheckSpace(curr, level);
+                //up right
+                curr.pos.X += 2;
+                CheckSpace(curr, level);
+                ////down right
+                curr.pos.Y += 2;
+                CheckSpace(curr, level);
+                //down left
+                curr.pos.X -= 2;
                 CheckSpace(curr, level);
             }
         }

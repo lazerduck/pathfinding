@@ -219,7 +219,6 @@ C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Deb
 C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\SharpDX.Direct3D11.dll
 C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\SharpDX.DXGI.dll
 C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\SharpDX.Direct2D1.dll
-C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\Lidgren.Network.dll
 C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\SharpDX.XInput.dll
 C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\SharpDX.RawInput.dll
 C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\SharpDX.Direct3D9.dll
@@ -262,3 +261,5 @@ C:\Users\computing\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Window
 C:\Users\computing\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\SharpDX.Direct3D9.xml
 C:\Users\computing\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\obj\x86\Debug\Pathfinder.csprojResolveAssemblyReference.cache
 C:\Users\computing\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\Content\5.txt
+C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\Content\5.txt
+C:\Users\adam\Documents\GitHub\pathfinding\Pathfinder\Pathfinder\bin\Windows\Debug\MonoGame.Framework.xml

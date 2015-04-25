@@ -93,6 +93,8 @@ namespace Pathfinder
         //this function is filled in by a derived class: must use SetNextGridLocation to actually move the bot
         protected abstract void ChooseNextGridLocation(Level level, Player plr);
 
+        public virtual void Setup(Level lvl, Player plr){}
+
         public void CalcHeuristic(Level level, Coord2 player)
         {
             if (diag)

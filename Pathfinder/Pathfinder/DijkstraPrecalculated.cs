@@ -13,41 +13,50 @@ namespace Pathfinder
             : base(x, y)
         {
         }
-        public void generate(Level level)
+        public override void Setup(Level level, Player plr)
         {
-            map = new Coord2[(int)Math.Pow(level.GridSize, 2), (int)Math.Pow(level.GridSize, 2)];
-            long time = DateTime.Now.Ticks;
-            //from
-            for (int i = 0; i < level.GridSize; i++)
+            
+            if (MultiActors.map == null)
             {
-                for (int j = 0; j < level.GridSize; j++)
+                map = new Coord2[(int)Math.Pow(level.GridSize, 2), (int)Math.Pow(level.GridSize, 2)];
+                long time = DateTime.Now.Ticks;
+                //from
+                for (int i = 0; i < level.GridSize; i++)
                 {
-                    calcpath(level, new Coord2(j,i));
-                    //to
-                    for (int ii = 0; ii < level.GridSize; ii++)
+                    for (int j = 0; j < level.GridSize; j++)
                     {
-                        for (int jj = 0; jj < level.GridSize; jj++)
+                        calcpath(level, new Coord2(j, i));
+                        //to
+                        for (int ii = 0; ii < level.GridSize; ii++)
                         {
-                            if (level.ValidPosition(new Coord2(jj, ii)))
+                            for (int jj = 0; jj < level.GridSize; jj++)
                             {
-                                if (ii == i && jj == j)
+                                if (level.ValidPosition(new Coord2(jj, ii)))
                                 {
-                                    map[(i * level.GridSize) + j, (ii * level.GridSize) + jj] = new Coord2(j, i);
-                                }
-                                else
-                                {
-                                    //find the node we want to path to
-                                    node temp = new node();
-                                    temp = Carray[jj, ii];
-                                    CreatePath(temp);
-                                    map[(ii * level.GridSize) + jj, (i * level.GridSize) + j] = path[path.Count - 2];
+                                    if (ii == i && jj == j)
+                                    {
+                                        map[(i * level.GridSize) + j, (ii * level.GridSize) + jj] = new Coord2(j, i);
+                                    }
+                                    else
+                                    {
+                                        //find the node we want to path to
+                                        node temp = new node();
+                                        temp = Carray[jj, ii];
+                                        CreatePath(temp);
+                                        map[(ii * level.GridSize) + jj, (i * level.GridSize) + j] = path[path.Count - 2];
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                Console.WriteLine("time taken = " + ((DateTime.Now.Ticks - time) / 10000000) + " seconds");
+                MultiActors.map = map;
             }
-            Console.WriteLine("time taken = " + ((DateTime.Now.Ticks-time) / 10000000) + " seconds");
+            else
+            {
+                map = MultiActors.map;
+            }
         }
         protected override void ChooseNextGridLocation(Level level, Player plr)
         {

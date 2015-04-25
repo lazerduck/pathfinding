@@ -67,7 +67,7 @@ namespace Pathfinder
 
         }
         //create the rectangles
-        public void ExpandRectangles(Level level, Player plr)
+        public override void Setup(Level level, Player plr)
         {
             Timer time = new Timer();
             time.startTick();
@@ -249,12 +249,14 @@ namespace Pathfinder
             }
             if (prevPos != plr.GridPosition)
             {
+                Timer time = new Timer() ;
+                time.startTick();
                 Prune(level, plr);
                 prevPos = plr.GridPosition;
                 heuristic = new float[level.gridX, level.gridY];
                 CalcHeuristic(level, plr.GridPosition);
                 Astar(level, plr);
-
+                Console.WriteLine("time to calculate = " + time.getTick());
             }
             if (path.Count != 0)
             {

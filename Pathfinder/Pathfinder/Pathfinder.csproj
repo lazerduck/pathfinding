@@ -45,8 +45,10 @@
     <Compile Include="Coord2.cs" />
     <Compile Include="Dijkstra.cs" />
     <Compile Include="DijkstraPrecalculated.cs" />
+    <Compile Include="DijkstraShared.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="level.cs" />
+    <Compile Include="MultiActors.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Precalculated.cs" />
     <Compile Include="Program.cs" />

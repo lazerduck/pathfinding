@@ -23,6 +23,13 @@ namespace Pathfinder
         public Coord2 prev;
         public float cost;
         public float f_score;
+        public node(node other)
+        {
+            pos = other.pos;
+            prev = other.prev;
+            cost = other.cost;
+            f_score = other.f_score;
+        }
     };
 
     /// <summary>
@@ -45,7 +52,7 @@ namespace Pathfinder
         //objects representing the level map, bot, and player 
         private Level level;
         //private AiBotBase bot;
-        private AiBotRSR bot;
+        private List<AiBotBase> bot = new List<AiBotBase>();
         private Player player;
 
         //screen size and frame rate
@@ -69,8 +76,19 @@ namespace Pathfinder
             level.Loadmap("../../../Content/5.txt");
             player = new Player(30, 20);
             //instantiate bot and player objects
-            bot = new AiBotRSR(10, 20);
-            bot.ExpandRectangles(level, player);
+            bot.Add( new Dijkstra(10, 20));
+            bot.Add(new DijkstraShared(10, 19));
+            bot.Add(new DijkstraShared(10, 18));
+            bot.Add(new DijkstraShared(10, 17));
+            bot.Add(new DijkstraShared(10, 16));
+            bot.Add(new DijkstraShared(10, 15));
+            bot.Add(new DijkstraShared(10, 14));
+            bot.Add(new DijkstraShared(10, 13));
+            bot.Add(new DijkstraShared(10, 12));
+            foreach(AiBotBase b in bot)
+            {
+                b.Setup(level, player);
+            }
             //bot.generate(level);
             //bot.LoadMap("../../../Content/map4.txt", level.GridSize);
             //make mouse visable
@@ -133,7 +151,10 @@ namespace Pathfinder
             }   
 
             //update bot and player
-            bot.Update(gameTime, level, player);
+            foreach(AiBotBase b in bot)
+            {
+                b.Update(gameTime, level, player);
+            }
             player.Update(gameTime, level);
 
             base.Update(gameTime);
@@ -146,19 +167,15 @@ namespace Pathfinder
             spriteBatch.Begin();
             //draw level map
             DrawGrid();
-            //draw scent
-            //for (int i = 0; i < 40; i++)
-            //{
-            //    for (int j = 0; j < 40; j++)
-            //    {
-            //        spriteBatch.Draw(tile1Texture, new Coord2(i * 15, j * 15), Color.Red * (float)bot.buffer1[i, j] );
-            //        count++;
-            //    }
-            //}
-            //draw rectangles
-            bot.Draw(spriteBatch, open_tex, level);
+            foreach (AiBotBase b in bot)
+            {
+                b.Draw(spriteBatch, open_tex, level);
+            }
             //draw bot
-            spriteBatch.Draw(aiTexture, bot.ScreenPosition, Color.White*0.3f);
+            foreach (AiBotBase b in bot)
+            {
+                spriteBatch.Draw(aiTexture, b.ScreenPosition, Color.White * 0.3f);
+            }
             //drawe player
             spriteBatch.Draw(playerTexture, player.ScreenPosition, Color.White*0.3f);
             spriteBatch.End();
@@ -174,33 +191,41 @@ namespace Pathfinder
             {
                 for (int y = 0; y < level.gridY; y++)
                 {
-                    Coord2 pos = new Coord2((x*15), (y*15));
+                    Coord2 pos = new Coord2((x * 15), (y * 15));
                     Coord2 posOrig = new Coord2((x), (y));
                     if (level.tiles[x, y] == 0) spriteBatch.Draw(tile1Texture, pos, Color.White);
                     else spriteBatch.Draw(tile2Texture, pos, Color.White);
+                    //foreach (AiBotBase b in bot)
+                    //{
+                    //    foreach (node n in b.open)
+                    //    {
+                    //        if (n.pos == posOrig)
+                    //        {
+                    //            spriteBatch.Draw(open_tex, pos, Color.White * 0.5f);
+                    //        }
+                    //    }
+                    //}
+                    //foreach (AiBotBase b in bot)
+                    //{
+                    //    foreach (node n in b.closed)
+                    //    {
+                    //        if (n.pos == posOrig)
+                    //        {
+                    //            spriteBatch.Draw(closed_tex, pos, Color.White * 0.5f);
+                    //        }
+                    //    }
+                    //}
+                    //foreach (AiBotBase b in bot)
+                    //{
+                    //    foreach (Coord2 n in b.path)
+                    //    {
+                    //        if (n == posOrig)
+                    //        {
+                    //            spriteBatch.Draw(path_tex, pos, Color.White * 0.5f);
+                    //        }
+                    //    }
 
-                    foreach (node n in bot.open)
-                    {
-                        if (n.pos == posOrig)
-                        {
-                            spriteBatch.Draw(open_tex, pos, Color.White * 0.5f);
-                        }
-                    }
-                    foreach (node n in bot.closed)
-                    {
-                        if (n.pos == posOrig)
-                        {
-                            spriteBatch.Draw(closed_tex, pos, Color.White * 0.5f);
-                        }
-                    }
-                    foreach (Coord2 n in bot.path)
-                    {
-                        if (n == posOrig)
-                        {
-                            spriteBatch.Draw(path_tex, pos, Color.White * 0.5f);
-                        }
-                    }
-                    
+                    //}
                 }
             }
         }
