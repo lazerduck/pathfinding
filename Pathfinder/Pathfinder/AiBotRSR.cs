@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace Pathfinder
 {
@@ -69,8 +70,8 @@ namespace Pathfinder
         //create the rectangles
         public override void Setup(Level level, Player plr)
         {
-            Timer time = new Timer();
-            time.startTick();
+            Stopwatch s = new Stopwatch();
+            s.Start();
             pruned = new int[level.gridX, level.gridY];
             for (int i = 0; i < level.gridX; i++)
             {
@@ -82,7 +83,8 @@ namespace Pathfinder
                 }
             }
             Prune(level, plr);
-            Console.WriteLine("Rectangle time = " + time.getTick()+" ms");
+            s.Stop();
+            Console.WriteLine("Tiem to create rectangels = "+s.Elapsed);
         }
         public void Expand(Coord2 start, Level level)
         {
@@ -249,14 +251,11 @@ namespace Pathfinder
             }
             if (prevPos != plr.GridPosition)
             {
-                Timer time = new Timer() ;
-                time.startTick();
                 Prune(level, plr);
                 prevPos = plr.GridPosition;
                 heuristic = new float[level.gridX, level.gridY];
                 CalcHeuristic(level, plr.GridPosition);
                 Astar(level, plr);
-                Console.WriteLine("time to calculate = " + time.getTick());
             }
             if (path.Count != 0)
             {
@@ -462,13 +461,12 @@ namespace Pathfinder
                 path.Add(curr.pos);
                 if (curr.prev == GridPosition)
                 {
-                    Console.WriteLine("found self");
                     path.Add(curr.prev);
                     break;
                 }
                 
             }
-            Console.WriteLine("path length = " + path.Count);
+            //Console.WriteLine("path length = " + path.Count);
         }
     }
 }

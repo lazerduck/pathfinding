@@ -14,17 +14,14 @@ namespace Pathfinder
     //loads a map from an ascii text file
     class Level
     {
-        private const int gridSize = 40; //set the map grid size
+        private int gridSize; //set the map grid size
         public int [,] tiles; //a 2d array of 0's and 1's: 0 = free cell, 1 = blocked cell
-        public int gridX = 40;
-        public int gridY = 40;
+        public int gridX ;
+        public int gridY ;
         //constructor initialises the grid array
         public Level()
         {
-            tiles = new int[gridX, gridY];
-            for (int i = 0; i < gridX; i++)
-                for (int j = 0; j < gridY; j++)
-                    tiles[i,j] = 0;
+            
         }
 
         //accessors
@@ -52,6 +49,13 @@ namespace Pathfinder
             {
                 string line = reader.ReadLine();
                 gridX = line.Length;
+                gridY = gridX;
+                gridSize = gridX;
+                tiles = new int[gridX, gridY];
+                for (int i = 0; i < gridX; i++)
+                    for (int j = 0; j < gridY; j++)
+                        tiles[i, j] = 0;
+
                 //Debug.Assert(line.Length == gridSize, "loaded map string line width must be 30");
                 Debug.Assert(line.Length == gridX, String.Format("loaded map string line width must be {0}.", gridSize));
                 while (line != null)

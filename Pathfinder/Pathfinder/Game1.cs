@@ -11,12 +11,14 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 //using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
+using System.Diagnostics;
+using System.Threading;
 
 #endregion
 
 namespace Pathfinder
 {
-
+   
     public struct node
     {
         public Coord2 pos;
@@ -36,7 +38,7 @@ namespace Pathfinder
     /// This is the main type for your game
     /// </summary>
     public class Game1 : Game
-    {   
+    {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         //sprite texture for tiles, player, and ai bot
@@ -48,7 +50,7 @@ namespace Pathfinder
         Texture2D closed_tex;
         Texture2D path_tex;
         //level size
-        
+
         //objects representing the level map, bot, and player 
         private Level level;
         //private AiBotBase bot;
@@ -63,6 +65,10 @@ namespace Pathfinder
 
         public Game1()
         {
+            //use only the second core
+            Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(2);
+            //set the priority to be high
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
             //constructor
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferHeight = BackBufferHeight;
@@ -73,19 +79,15 @@ namespace Pathfinder
             TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFrameRate);
             //load level map
             level = new Level();
-            level.Loadmap("../../../Content/5.txt");
-            player = new Player(30, 20);
+            level.Loadmap("../../../Content/100H.txt");
+            Console.WriteLine("map = " + level.gridX + " by " + level.gridY);
+            player = new Player(10, 10);
             //instantiate bot and player objects
-            bot.Add( new Dijkstra(10, 20));
-            bot.Add(new DijkstraShared(10, 19));
-            bot.Add(new DijkstraShared(10, 18));
-            bot.Add(new DijkstraShared(10, 17));
-            bot.Add(new DijkstraShared(10, 16));
-            bot.Add(new DijkstraShared(10, 15));
-            bot.Add(new DijkstraShared(10, 14));
-            bot.Add(new DijkstraShared(10, 13));
-            bot.Add(new DijkstraShared(10, 12));
-            foreach(AiBotBase b in bot)
+            for (int i = 5; i < 15; i++)
+            {
+                bot.Add(new DijkstraPrecalculated(5, i));
+            }
+            foreach (AiBotBase b in bot)
             {
                 b.Setup(level, player);
             }
@@ -129,7 +131,7 @@ namespace Pathfinder
             KeyboardState keyState = Keyboard.GetState();
             Coord2 currentPos = new Coord2();
             currentPos = player.GridPosition;
-            if(keyState.IsKeyDown(Keys.Up))
+            if (keyState.IsKeyDown(Keys.Up))
             {
                 currentPos.Y -= 1;
                 player.SetNextLocation(currentPos, level);
@@ -148,10 +150,10 @@ namespace Pathfinder
             {
                 currentPos.X += 1;
                 player.SetNextLocation(currentPos, level);
-            }   
+            }
 
             //update bot and player
-            foreach(AiBotBase b in bot)
+            foreach (AiBotBase b in bot)
             {
                 b.Update(gameTime, level, player);
             }
@@ -163,7 +165,6 @@ namespace Pathfinder
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            
             spriteBatch.Begin();
             //draw level map
             DrawGrid();
@@ -174,10 +175,10 @@ namespace Pathfinder
             //draw bot
             foreach (AiBotBase b in bot)
             {
-                spriteBatch.Draw(aiTexture, b.ScreenPosition, Color.White * 0.3f);
+                spriteBatch.Draw(aiTexture, b.ScreenPosition, Color.White );
             }
             //drawe player
-            spriteBatch.Draw(playerTexture, player.ScreenPosition, Color.White*0.3f);
+            spriteBatch.Draw(playerTexture, player.ScreenPosition, Color.White * 0.3f);
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -186,7 +187,8 @@ namespace Pathfinder
         private void DrawGrid()
         {
             //draws the map grid
-            int sz = level.GridSize;
+            int sz = level.gridX;
+
             for (int x = 0; x < level.gridX; x++)
             {
                 for (int y = 0; y < level.gridY; y++)
