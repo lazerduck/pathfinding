@@ -8,6 +8,7 @@ namespace Pathfinder
 {
     class Precalculated : AiBotBase
     {
+        public override void Setup(Level lvl, Player plr) { }
         bool diag = false;
         float weight = 1f;
         float[,] heuristic;
@@ -22,7 +23,7 @@ namespace Pathfinder
         }
         protected override void ChooseNextGridLocation(Level level, Player plr)
         {
-            SetNextGridPosition(map[(GridPosition.Y * level.gridY) + GridPosition.X, (plr.GridPosition.Y * level.gridY) + plr.GridPosition.X], level);
+            //SetNextGridPosition(map[(GridPosition.Y * level.gridY) + GridPosition.X, (plr.GridPosition.Y * level.gridY) + plr.GridPosition.X], level);
         }
         public void calcPaths(Level level)
         {

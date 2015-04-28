@@ -72,6 +72,7 @@ namespace Pathfinder
         {
             Stopwatch s = new Stopwatch();
             s.Start();
+            RectList.Clear();
             pruned = new int[level.gridX, level.gridY];
             for (int i = 0; i < level.gridX; i++)
             {
@@ -84,7 +85,7 @@ namespace Pathfinder
             }
             Prune(level, plr);
             s.Stop();
-            Console.WriteLine("Tiem to create rectangels = "+s.Elapsed);
+            Console.WriteLine("Time to create rectangels = "+((float)s.ElapsedTicks/(float)(Stopwatch.Frequency/1000.0f))+"ms");
         }
         public void Expand(Coord2 start, Level level)
         {

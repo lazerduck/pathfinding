@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Pathfinder
 {
@@ -15,7 +16,8 @@ namespace Pathfinder
         }
         public override void Setup(Level level, Player plr)
         {
-            
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             if (MultiActors.map == null)
             {
                 map = new Coord2[(int)Math.Pow(level.GridSize, 2), (int)Math.Pow(level.GridSize, 2)];
@@ -50,13 +52,16 @@ namespace Pathfinder
                         }
                     }
                 }
-                Console.WriteLine("time taken = " + ((DateTime.Now.Ticks - time) / 10000000) + " seconds");
                 MultiActors.map = map;
             }
             else
             {
                 map = MultiActors.map;
             }
+            sw.Stop();
+            MultiActors.Metrics += "Time to precalc: " +((float)sw.ElapsedTicks / (float)(Stopwatch.Frequency / 1000.0f)) + "ms";
+            MultiActors.Metrics += "path length: " + path.Count;
+            MultiActors.TestFinished = true;
         }
         protected override void ChooseNextGridLocation(Level level, Player plr)
         {

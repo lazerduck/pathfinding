@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace Pathfinder
 {
-   
+    
     public struct node
     {
         public Coord2 pos;
@@ -69,6 +69,10 @@ namespace Pathfinder
             Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(2);
             //set the priority to be high
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+            //initialise the testing
+            MultiActors.state = MultiActors.TestState.E20;
+            MultiActors.algo = MultiActors.TestAlgorithm.Astar;
+            MultiActors.Metrics = "Dijksta\n20x20 empty";
             //constructor
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferHeight = BackBufferHeight;
@@ -79,13 +83,13 @@ namespace Pathfinder
             TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / TargetFrameRate);
             //load level map
             level = new Level();
-            level.Loadmap("../../../Content/100H.txt");
+            level.Loadmap("../../../Content/50H.txt");
             Console.WriteLine("map = " + level.gridX + " by " + level.gridY);
             player = new Player(10, 10);
             //instantiate bot and player objects
-            for (int i = 5; i < 15; i++)
+            //for (int i = 5; i < 6; i++)
             {
-                bot.Add(new DijkstraPrecalculated(5, i));
+                bot.Add(new Dijkstra(1, 1));
             }
             foreach (AiBotBase b in bot)
             {
@@ -151,6 +155,15 @@ namespace Pathfinder
                 currentPos.X += 1;
                 player.SetNextLocation(currentPos, level);
             }
+            if(keyState.IsKeyDown(Keys.L))
+            {
+                level.Loadmap("../../../Content/20E.txt");
+                foreach (AiBotBase b in bot)
+                {
+                    b.resetPos();
+                    b.Setup(level, player);
+                }
+            }
 
             //update bot and player
             foreach (AiBotBase b in bot)
@@ -158,7 +171,105 @@ namespace Pathfinder
                 b.Update(gameTime, level, player);
             }
             player.Update(gameTime, level);
-
+            //update the test
+            if (MultiActors.AlgFinished)
+            {
+                bot.Clear();
+                switch (MultiActors.algo)
+                {
+                    case MultiActors.TestAlgorithm.Dijkstra:
+                        bot.Add(new Dijkstra(1, 1));
+                        MultiActors.algo = MultiActors.TestAlgorithm.Astar;
+                        MultiActors.Metrics += "\n\nDijkstra ";
+                        break;
+                        
+                    case MultiActors.TestAlgorithm.Astar:
+                        bot.Add(new Astar(1, 1));
+                        MultiActors.algo = MultiActors.TestAlgorithm.Precalculated;
+                        MultiActors.Metrics += "\n\nAstar ";
+                        break;
+                    case MultiActors.TestAlgorithm.Precalculated:
+                         bot.Add(new DijkstraPrecalculated(1, 1));
+                         MultiActors.algo = MultiActors.TestAlgorithm.AvP;
+                         MultiActors.Metrics += "\n\nPre-Calculated ";
+                        break;
+                    case MultiActors.TestAlgorithm.AvP:
+                         bot.Add(new AiBotAvP(1, 1));
+                         MultiActors.algo = MultiActors.TestAlgorithm.RSR;
+                         MultiActors.Metrics += "\n\nAvP ";
+                        break;
+                    case MultiActors.TestAlgorithm.RSR:
+                         bot.Add(new AiBotRSR(1, 1));
+                         MultiActors.Metrics += "\n\nRSR ";
+                        break;
+                }
+                MultiActors.AlgFinished = false;
+                foreach (AiBotBase b in bot)
+                {
+                    b.resetPos();
+                    b.Setup(level, player);
+                }
+                
+            }
+            if (MultiActors.TestFinished)
+            {
+                switch (MultiActors.state)
+                {
+                    case MultiActors.TestState.E20:
+                        level.Loadmap("../../../Content/20L.txt");
+                        MultiActors.state = MultiActors.TestState.L20;
+                        MultiActors.Metrics += "\n20x20 low ";
+                        break;
+                    case MultiActors.TestState.L20:
+                        level.Loadmap("../../../Content/20H.txt");
+                        MultiActors.state = MultiActors.TestState.H20;
+                        MultiActors.Metrics += "\n20x20 high ";
+                        break;
+                    case MultiActors.TestState.H20:
+                        level.Loadmap("../../../Content/50E.txt");
+                        MultiActors.state = MultiActors.TestState.E50;
+                        MultiActors.Metrics += "\n50x50 empty ";
+                        break;
+                    case MultiActors.TestState.E50:
+                        level.Loadmap("../../../Content/50L.txt");
+                        MultiActors.state = MultiActors.TestState.L50;
+                        MultiActors.Metrics += "\n50x50 low ";
+                        break;
+                    case MultiActors.TestState.L50:
+                        level.Loadmap("../../../Content/50H.txt");
+                        MultiActors.state = MultiActors.TestState.H50;
+                        MultiActors.Metrics += "\n50x50 high ";
+                        break;
+                    case MultiActors.TestState.H50:
+                        level.Loadmap("../../../Content/100E.txt");
+                        MultiActors.state = MultiActors.TestState.E100;
+                        MultiActors.Metrics += "\n100x100 empty ";
+                        break;
+                    case MultiActors.TestState.E100:
+                        level.Loadmap("../../../Content/100L.txt");
+                        MultiActors.state = MultiActors.TestState.L100;
+                        MultiActors.Metrics += "\n100x100 low ";
+                        break;
+                    case MultiActors.TestState.L100:
+                        level.Loadmap("../../../Content/100H.txt");
+                        MultiActors.state = MultiActors.TestState.H100;
+                        MultiActors.Metrics += "\n100x100 high ";
+                        break;
+                    case MultiActors.TestState.H100:
+                        level.Loadmap("../../../Content/20E.txt");
+                        MultiActors.state = MultiActors.TestState.E20;
+                        Console.Write(MultiActors.Metrics);
+                        MultiActors.AlgFinished = true;
+                        break;
+                }
+                MultiActors.TestFinished = false;
+                foreach (AiBotBase b in bot)
+                {
+                    b.resetPos();
+                    b.Setup(level, player);
+                }
+                MultiActors.map = null;
+            }
             base.Update(gameTime);
         }
 

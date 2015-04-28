@@ -7,6 +7,7 @@ namespace Pathfinder
 {
     class AiBotSimple : AiBotBase
     {
+        public override void Setup(Level lvl, Player plr){}
         public AiBotSimple(int x, int y)
             : base(x, y)
         {

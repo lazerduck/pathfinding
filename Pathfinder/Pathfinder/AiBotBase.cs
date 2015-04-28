@@ -28,8 +28,9 @@ namespace Pathfinder
         //targetPosition is the next chosen location of the bot = the position it is moving towards
         //screen position is the position the sprite is drawn to - somewhere between gridlocation and targetlocation
         private Coord2 gridPosition; //X position, Y position on grid
+        private Coord2 startPosition;
         private Coord2 targetPosition; //X position, Y position on grid
-        private Coord2 screenPosition; //X position, Y position on grid
+        private Coord2 screenPosition; //X position, Y position on screen
         int timerMs;
         const int moveTime = 400; //miliseconds
 
@@ -54,9 +55,10 @@ namespace Pathfinder
             gridPosition = new Coord2(x, y);
             targetPosition = new Coord2(x, y);
             screenPosition = new Coord2(x, y);
+            startPosition = gridPosition;
             timerMs = moveTime;
         }
-
+        public void resetPos() { gridPosition = startPosition; targetPosition = gridPosition; }
         //sets target position: the next grid location to move to
         //need to validate this position - so must be within 1 cell of current position(in x and y directions)
         //and must also be valid on the map: greater than 0, less than mapsize, and not a wall

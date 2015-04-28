@@ -7,6 +7,7 @@ namespace Pathfinder
 {
     class AiBotBetter : AiBotBase
     {
+        public override void Setup(Level lvl, Player plr) { }
         public int direction = 0;
         /* 0
          *3 1

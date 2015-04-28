@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 
 namespace Pathfinder
@@ -16,7 +17,7 @@ namespace Pathfinder
         }
         protected override void ChooseNextGridLocation(Level level, Player plr)
         {
-            if (target != plr.GridPosition)
+            //if (target != plr.GridPosition)
             {
                 target = plr.GridPosition;
                 calcpath(level);
@@ -29,6 +30,8 @@ namespace Pathfinder
         }
         void calcpath(Level level)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             //clear arrays
             open.Clear();
             closed.Clear();
@@ -52,6 +55,7 @@ namespace Pathfinder
                 {
                     //no path 
                     found = true;
+                    break;
                 }
                 foreach (node n in open)
                 {
@@ -70,6 +74,7 @@ namespace Pathfinder
                 {
                     CreatePath(curr);
                     found = true;
+                    break;
                 }
                 //check nodes
                 curr.prev = curr.pos;
@@ -97,6 +102,12 @@ namespace Pathfinder
                 curr.pos.X -= 2;
                 CheckSpace(curr, level);
             }
+            sw.Stop();
+            MultiActors.Metrics += "\ntime to find path: "+((float)sw.ElapsedTicks / (float)(Stopwatch.Frequency / 1000.0f)) + "ms";
+            MultiActors.Metrics += "\nopen list size: " + open.Count;
+            MultiActors.Metrics += "\nclosed list size: " + closed.Count;
+            MultiActors.Metrics += "\npath length: " + path.Count;
+            MultiActors.TestFinished = true;
         }
         void CheckSpace(node curr, Level level)
         {
